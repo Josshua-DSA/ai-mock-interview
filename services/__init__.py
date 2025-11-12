@@ -5,7 +5,7 @@
 Services Module
 """
 from .llm_service import LLMService
-from .visualization_service import VisualizationService
+from .visualizations_service import VisualizationService
 
 __all__ = [
     'LLMService',

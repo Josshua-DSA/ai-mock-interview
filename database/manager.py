@@ -158,3 +158,52 @@ class DatabaseManager:
         except Exception as e:
             print(f"Error saving profile: {str(e)}")
             return False
+        
+    def get_analytics_data(self, user_id: str):
+        """Get analytics data for the given user"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # Mengambil data analitik berdasarkan riwayat wawancara dan profil
+        cursor.execute('''SELECT COUNT(*) FROM interview_results WHERE user_id = ?''', (user_id,))
+        total_interviews = cursor.fetchone()[0]
+
+        cursor.execute('''SELECT AVG(total_score) FROM interview_results WHERE user_id = ?''', (user_id,))
+        avg_score = cursor.fetchone()[0] or 0
+
+        cursor.execute('''SELECT AVG(total_score) - ? FROM interview_results WHERE user_id = ? ORDER BY created_at LIMIT 1''', (avg_score, user_id))
+        improvement_rate = cursor.fetchone()[0] or 0
+
+        # Mendapatkan data kekuatan dan kelemahan berdasarkan kategori
+        cursor.execute('''SELECT category, AVG(score) FROM qa_history WHERE user_id = ? GROUP BY category ORDER BY AVG(score) DESC LIMIT 1''', (user_id,))
+        strongest_area = cursor.fetchone() or ("None", 0)
+
+        cursor.execute('''SELECT category, AVG(score) FROM qa_history WHERE user_id = ? GROUP BY category ORDER BY AVG(score) ASC LIMIT 1''', (user_id,))
+        weakest_area = cursor.fetchone() or ("None", 0)
+
+        # Mengambil skor per kategori dari interview_results
+        cursor.execute('''SELECT komunikasi, problem_solving, leadership, teamwork, pengetahuan_teknis, adaptabilitas, kreativitas, critical_thinking
+                          FROM interview_results WHERE user_id = ? ORDER BY created_at DESC LIMIT 1''', (user_id,))
+        category_scores = cursor.fetchone()
+
+        # Membuat data analitik
+        analytics_data = {
+            'total_interviews': total_interviews,
+            'avg_score': avg_score,
+            'improvement_rate': improvement_rate,
+            'strongest_area': strongest_area,
+            'weakest_area': weakest_area,
+            'category_scores': {
+                'komunikasi': category_scores[0] if category_scores else 0,
+                'problem_solving': category_scores[1] if category_scores else 0,
+                'leadership': category_scores[2] if category_scores else 0,
+                'teamwork': category_scores[3] if category_scores else 0,
+                'pengetahuan_teknis': category_scores[4] if category_scores else 0,
+                'adaptabilitas': category_scores[5] if category_scores else 0,
+                'kreativitas': category_scores[6] if category_scores else 0,
+                'critical_thinking': category_scores[7] if category_scores else 0
+            }
+        }
+        
+        conn.close()
+        return analytics_data

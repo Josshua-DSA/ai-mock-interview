@@ -1,8 +1,8 @@
 import streamlit as st
 import time
 import json
-from services.visualization_service import VisualizationService
-from utils.helpers import Utils
+from services.visualizations_service import VisualizationService
+from utils.helper import Utils
 from config.settings import CONFIG
 
 

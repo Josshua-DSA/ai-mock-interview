@@ -4,7 +4,7 @@ Interview Page - Interactive Interview Session
 import streamlit as st
 import time
 from config.settings import CONFIG
-from utils.helpers import Utils
+from utils.helper import Utils
 from ui.components import render_question_card
 
 

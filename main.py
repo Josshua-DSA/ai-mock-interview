@@ -12,7 +12,7 @@ from config.settings import CONFIG
 # Import services
 from database.manager import DatabaseManager
 from services.llm_service import LLMService
-from services.visualization_service import VisualizationService
+from services.visualizations_service import VisualizationService
 
 # Import UI components
 from ui.components import render_header, render_sidebar

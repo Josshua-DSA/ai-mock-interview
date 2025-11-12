@@ -4,6 +4,6 @@
 """
 Utilities Module
 """
-from .helpers import Utils
+from .helper import Utils
 
 __all__ = ['Utils']

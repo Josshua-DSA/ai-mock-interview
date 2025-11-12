@@ -3,7 +3,7 @@ Input Page - CV and Profile Input
 """
 import streamlit as st
 import time
-from utils.helpers import Utils
+from utils.helper import Utils
 from config.settings import JobCategory
 
 

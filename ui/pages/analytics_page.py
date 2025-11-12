@@ -6,8 +6,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
-from utils.helpers import Utils
-from services.visualization_service import VisualizationService
+from utils.helper import Utils
+from services.visualizations_service import VisualizationService
 from config.settings import CONFIG
 import json
 

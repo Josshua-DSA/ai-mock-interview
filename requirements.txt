@@ -1,11 +1,10 @@
 # Core Dependencies
 streamlit>=1.28.0
-openai>=1.3.0
 pandas>=2.0.0
 plotly>=5.17.0
 
 # Database
-sqlite3
+pysqlite3
 
 # PDF Processing
 PyPDF2>=3.0.0

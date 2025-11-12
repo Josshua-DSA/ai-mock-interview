@@ -1,6 +1,6 @@
 import streamlit as st
-from services.visualization_service import VisualizationService
-from utils.helpers import Utils
+from services.visualizations_service import VisualizationService
+from utils.helper import Utils
 from datetime import datetime
 
 
