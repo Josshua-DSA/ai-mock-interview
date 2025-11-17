@@ -1,9 +1,8 @@
-"""
-Input Page - CV and Profile Input
-"""
 import streamlit as st
 import time
-from utils.helper import Utils
+from utils.pdf_extractor import extract_text_from_pdf
+from utils.cv_extractor import validate_cv
+from utils.timer import generate_session_id
 from config.settings import JobCategory
 
 
@@ -31,7 +30,7 @@ def show_input_page(db, llm):
         
         if uploaded_file:
             with st.spinner("📖 Reading PDF..."):
-                extracted_text = Utils.extract_text_from_pdf(uploaded_file)
+                extracted_text = extract_text_from_pdf(uploaded_file)
                 if extracted_text:
                     cv_text_from_pdf = extracted_text
                     st.success(f"✅ PDF loaded! ({len(cv_text_from_pdf)} chars)")
@@ -74,7 +73,7 @@ def show_input_page(db, llm):
                 cv_text_manual = ""
                 if cv_text_from_pdf:
                     st.success(f"✅ Using CV from PDF ({len(cv_text_from_pdf)} chars)")
-        
+
         with col2:
             st.subheader("Job Target")
             
@@ -107,7 +106,7 @@ def show_input_page(db, llm):
             st.error("❌ CV cannot be empty!")
             return
         
-        is_valid, message = Utils.validate_cv(cv_text)
+        is_valid, message = validate_cv(cv_text)
         if not is_valid:
             st.error(f"❌ {message}")
             return
@@ -147,7 +146,7 @@ def show_input_page(db, llm):
             st.session_state.answers = []
             st.session_state.answer_metadata = []
             st.session_state.current_question_idx = 0
-            st.session_state.session_id = Utils.generate_session_id()
+            st.session_state.session_id = generate_session_id()
             st.session_state.interview_start_time = time.time()
             st.session_state.question_start_time = time.time()
             st.session_state.stage = 'interview'

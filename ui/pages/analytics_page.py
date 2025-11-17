@@ -6,7 +6,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
-from utils.helper import Utils
+
+# Import dari utils yang sudah dipecah
+from utils.timer import format_duration, calculate_grade
+from utils.exporter import export_to_json
+
+# Import services
 from services.visualizations_service import VisualizationService
 from config.settings import CONFIG
 import json
@@ -77,7 +82,7 @@ def show_analytics_page(db):
         )
     
     with col4:
-        grade = Utils.calculate_grade(analytics['avg_score'])
+        grade = calculate_grade(analytics['avg_score'])
         st.metric(
             "Grade", 
             grade.split('(')[0].strip(),
@@ -231,7 +236,7 @@ def show_analytics_page(db):
                     
                     with col2:
                         st.write(f"**Score:** {record['total_score']:.1f}/100")
-                        st.write(f"**Duration:** {Utils.format_duration(record['interview_duration'])}")
+                        st.write(f"**Duration:** {format_duration(record['interview_duration'])}")
                     
                     with col3:
                         st.write(f"**Difficulty:** {record['difficulty_level'] or 'N/A'}")
@@ -543,14 +548,12 @@ def show_analytics_page(db):
             
             for h in reversed(history):
                 dates.append(h['created_at'])
-                category_history['komunikasi'].append(h['komunikasi'])
-                category_history['problem_solving'].append(h['problem_solving'])
-                category_history['leadership'].append(h['leadership'])
-                category_history['teamwork'].append(h['teamwork'])
-                category_history['pengetahuan_teknis'].append(h['pengetahuan_teknis'])
-                category_history['adaptabilitas'].append(h['adaptabilitas'])
-                category_history['kreativitas'].append(h.get('kreativitas', 0))
-                category_history['critical_thinking'].append(h.get('critical_thinking', 0))
+                category_history['Komunikasi'].append(h['komunikasi'])
+                category_history['Problem Solving'].append(h['problem_solving'])
+                category_history['Leadership'].append(h['leadership'])
+                category_history['Teamwork'].append(h['teamwork'])
+                category_history['Pengetahuan Teknis'].append(h['pengetahuan_teknis'])
+                category_history['Adaptabilitas'].append(h['adaptabilitas'])
             
             fig = go.Figure()
             
@@ -560,7 +563,7 @@ def show_analytics_page(db):
                         x=dates,
                         y=scores,
                         mode='lines+markers',
-                        name=cat.replace('_', ' ').title()
+                        name=cat
                     ))
             
             fig.update_layout(
@@ -660,7 +663,7 @@ def show_analytics_page(db):
                     'Pass Rate': '{:.0f}%',
                     'Best Score': '{:.1f}',
                     'Latest': '{:.1f}',
-                    'Avg Duration': lambda x: Utils.format_duration(int(x))
+                    'Avg Duration': lambda x: format_duration(int(x))
                 }).background_gradient(subset=['Avg Score'], cmap='RdYlGn', vmin=0, vmax=100),
                 use_container_width=True,
                 hide_index=True
@@ -826,9 +829,9 @@ def show_analytics_page(db):
                 st.markdown(f"Priority: **{rec['priority']}**")
                 st.markdown("---")
 
+        # Display Learning Resources based on categories with lowest scores
         st.markdown("### 📚 Learning Resources")
-
-        # Display learning resources based on categories with lowest scores
+        
         if weakest[1] < 70:
             st.markdown(f"### Recommended Learning Resources for {weakest[0]}")
             st.write("Here are some resources to improve your skills in this category.")
@@ -839,5 +842,3 @@ def show_analytics_page(db):
 
     # ==================== END OF LEARNING PATH ====================
 
-# Functions like Utils.format_duration and database interactions like db.get_analytics_data() 
-# should be implemented as per your project's setup

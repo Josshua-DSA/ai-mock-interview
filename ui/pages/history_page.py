@@ -1,6 +1,7 @@
 import streamlit as st
 from services.visualizations_service import VisualizationService
-from utils.helper import Utils
+from utils.timer import format_duration
+from utils.exporter import export_to_json
 from datetime import datetime
 
 
@@ -32,7 +33,7 @@ def show_history_page(db):
     col2.metric("Avg Score", f"{avg_score:.1f}")
     col3.metric("Passed Interviews", passed)
 
-    st.markdown(f"**Average Duration:** {Utils.format_duration(avg_duration)}")
+    st.markdown(f"**Average Duration:** {format_duration(avg_duration)}")
     st.markdown("---")
 
     # Display each interview record with expanded details
@@ -40,8 +41,9 @@ def show_history_page(db):
         status = "✅" if record['pass_status'] else "❌"
 
         with st.expander(f"{status} {record['job_title']} - {record['total_score']:.1f}"):
+
             st.write(f"**Date:** {record['created_at']}")
-            st.write(f"**Duration:** {Utils.format_duration(record['interview_duration'])}")
+            st.write(f"**Duration:** {format_duration(record['interview_duration'])}")
 
             # Display detailed scores in categories
             scores = {
@@ -96,4 +98,3 @@ def show_history_page(db):
     if st.button("🏠 Return to Main Page"):
         st.session_state.stage = 'input'
         st.rerun()
-
